@@ -1,5 +1,9 @@
 package objects
 
 type Point3d struct {
-	x, y, z float64
+	tuple
+}
+
+func (self *Point3d) Init() {
+	self.W = 1
 }
