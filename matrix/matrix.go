@@ -1,7 +1,9 @@
 package matrix
 
 import (
-	"github.com/0xpride/ray/objects"
+	"math"
+
+	"github.com/0xpride/ray/core"
 	"github.com/0xpride/ray/utils"
 )
 
@@ -31,8 +33,8 @@ func (self *Matrix) Scale(num float64) {
 	}
 }
 
-func (self *Matrix) GetColum(col uint32) *objects.Tuple {
-	tup := new(objects.Tuple)
+func (self *Matrix) GetColum(col uint32) *core.Tuple {
+	tup := new(core.Tuple)
 
 	tup.X = self[0][col]
 	tup.Y = self[1][col]
@@ -42,8 +44,8 @@ func (self *Matrix) GetColum(col uint32) *objects.Tuple {
 	return tup
 }
 
-func (self *Matrix) GetRow(row uint32) *objects.Tuple {
-	tup := new(objects.Tuple)
+func (self *Matrix) GetRow(row uint32) *core.Tuple {
+	tup := new(core.Tuple)
 
 	tup.X = self[row][0]
 	tup.Y = self[row][1]
@@ -53,13 +55,17 @@ func (self *Matrix) GetRow(row uint32) *objects.Tuple {
 	return tup
 }
 
-func (self *Matrix) MultTuple(t *objects.Tuple) *objects.Tuple {
-	tup := new(objects.Tuple)
+func (self *Matrix) MultTuple(t *core.Tuple) *core.Tuple {
+	tup := new(core.Tuple)
 
-	tup.X = self.GetRow(0).Dot(t)
-	tup.Y = self.GetRow(1).Dot(t)
-	tup.Z = self.GetRow(2).Dot(t)
-	tup.W = self.GetRow(3).Dot(t)
+	// tup.X = self.GetRow(0).Dot(t)
+	// tup.Y = self.GetRow(1).Dot(t)
+	// tup.Z = self.GetRow(2).Dot(t)
+	// tup.W = self.GetRow(3).Dot(t)
+	tup.X = self[0][0]*t.X + self[0][1]*t.Y + self[0][2]*t.Z + self[0][3]*t.W
+	tup.Y = self[1][0]*t.X + self[1][1]*t.Y + self[1][2]*t.Z + self[1][3]*t.W
+	tup.Z = self[2][0]*t.X + self[2][1]*t.Y + self[2][2]*t.Z + self[2][3]*t.W
+	tup.W = self[3][0]*t.X + self[3][1]*t.Y + self[3][2]*t.Z + self[3][3]*t.W
 
 	return tup
 }
@@ -190,8 +196,54 @@ func (self *Matrix) Inverse() *Matrix {
 
 func GetTransformMatrix(x float64, y float64, z float64) *Matrix {
 	identity := IdentityMatrix()
-	identity[3][0] = x
-	identity[3][1] = y
-	identity[3][2] = z
+	identity[0][3] = x
+	identity[1][3] = y
+	identity[2][3] = z
+	return identity
+}
+
+func GetScaleMatrix(x float64, y float64, z float64) *Matrix {
+	identity := IdentityMatrix()
+	identity[0][0] = x
+	identity[1][1] = y
+	identity[2][2] = z
+	return identity
+}
+
+func GetRotateXMatrix(rad float64) *Matrix {
+	identity := IdentityMatrix()
+	identity[1][1] = math.Cos(rad)
+	identity[1][2] = -math.Sin(rad)
+	identity[2][1] = math.Sin(rad)
+	identity[2][2] = math.Cos(rad)
+	return identity
+}
+
+func GetRotateYMatrix(rad float64) *Matrix {
+	identity := IdentityMatrix()
+	identity[0][0] = math.Cos(rad)
+	identity[0][2] = math.Sin(rad)
+	identity[2][0] = -math.Sin(rad)
+	identity[2][2] = math.Cos(rad)
+	return identity
+}
+
+func GetRotateZMatrix(rad float64) *Matrix {
+	identity := IdentityMatrix()
+	identity[0][0] = math.Cos(rad)
+	identity[0][1] = -math.Sin(rad)
+	identity[1][0] = math.Sin(rad)
+	identity[1][1] = math.Cos(rad)
+	return identity
+}
+
+func GetShearingMatrix(Xy float64, Xz float64, Yx float64, Yz float64, Zx float64, Zy float64) *Matrix {
+	identity := IdentityMatrix()
+	identity[0][1] = Xy
+	identity[0][2] = Xz
+	identity[1][0] = Yx
+	identity[1][2] = Yz
+	identity[2][0] = Zx
+	identity[2][1] = Zy
 	return identity
 }

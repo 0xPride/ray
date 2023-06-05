@@ -1,4 +1,4 @@
-package objects
+package core
 
 import "math"
 
@@ -10,6 +10,14 @@ func TupleInit(x float64, y float64, z float64, w float64) *Tuple {
 	tup := &Tuple{X: x, Y: y, Z: z, W: w}
 
 	return tup
+}
+
+func VectorInit(x float64, y float64, z float64) *Tuple {
+	return TupleInit(x, y, z, 0)
+}
+
+func PointInit(x float64, y float64, z float64) *Tuple {
+	return TupleInit(x, y, z, 1)
 }
 
 func (self *Tuple) Add(t *Tuple) *Tuple {

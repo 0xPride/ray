@@ -3,7 +3,7 @@ package matrix
 import (
 	"testing"
 
-	"github.com/0xpride/ray/objects"
+	"github.com/0xpride/ray/core"
 )
 
 func TestMatrixMult(t *testing.T) {
@@ -19,7 +19,7 @@ func TestMatrixMult(t *testing.T) {
 
 func TestMatrixGetColum(t *testing.T) {
 	m1 := Matrix{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 8, 7, 6}, {5, 4, 3, 2}}
-	res := objects.Tuple{X: 2, Y: 6, Z: 8, W: 4}
+	res := core.Tuple{X: 2, Y: 6, Z: 8, W: 4}
 	got := m1.GetColum(1)
 	if *got != res {
 		t.Errorf("got %v\n insted %v", *got, res)
@@ -28,7 +28,7 @@ func TestMatrixGetColum(t *testing.T) {
 
 func TestMatrixGetRow(t *testing.T) {
 	m1 := Matrix{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 8, 7, 6}, {5, 4, 3, 2}}
-	res := objects.Tuple{X: 5, Y: 4, Z: 3, W: 2}
+	res := core.Tuple{X: 5, Y: 4, Z: 3, W: 2}
 	got := m1.GetRow(3)
 	if *got != res {
 		t.Errorf("got %v\n insted %v", *got, res)
@@ -37,7 +37,7 @@ func TestMatrixGetRow(t *testing.T) {
 
 func TestMatrixMultTuple(t *testing.T) {
 	m1 := Matrix{{1, 2, 3, 4}, {2, 4, 4, 2}, {8, 6, 4, 1}, {0, 0, 0, 1}}
-	var tup, res objects.Tuple
+	var tup, res core.Tuple
 	tup.X = 1
 	tup.Y = 2
 	tup.Z = 3
@@ -172,10 +172,32 @@ func TestMatrixInverse(t *testing.T) {
 	// }
 }
 
-func TestTransformMatrix(t *testing.T) {
-	var p objects.Point3d
-
-	p.Init(-3, 4, 5)
+func TestTransformMatrix1(t *testing.T) {
+	p := core.PointInit(-3, 4, 5)
+	res := core.PointInit(2, 1, 7)
 	trans := GetTransformMatrix(5, -3, 2)
-	trans.MultTuple(&p)
+	got := trans.MultTuple(p)
+	if *got != *res {
+		t.Errorf("got %v\n insted %v", got, res)
+	}
+}
+
+func TestTransformMatrix2(t *testing.T) {
+	p := core.VectorInit(-3, 4, 5)
+	res := core.VectorInit(-3, 4, 5)
+	trans := GetTransformMatrix(5, -3, 2)
+	got := trans.MultTuple(p)
+	if *got != *res {
+		t.Errorf("got %v\n insted %v", got, res)
+	}
+}
+
+func TestScaleMatrix2(t *testing.T) {
+	p := core.VectorInit(-4, 6, 8)
+	res := core.VectorInit(-8, 18, 32)
+	trans := GetScaleMatrix(2, 3, 4)
+	got := trans.MultTuple(p)
+	if *got != *res {
+		t.Errorf("got %v\n insted %v", got, res)
+	}
 }
